@@ -1269,5 +1269,28 @@ def great_circle_distance(lat1, lon1, lat2, lon2, units = 'km'):
         d /= 1.85035
         return d
 
-print 'Reading, UK is about ' + str(round(great_circle_distance(32.3, -64.8, 51.5, -0.95), 0)) + 'km from Bermuda'
-
+def equivalent_potential_temperature(t_c, p_mb, qt_kgkg):
+    theta = dry_potential_temperature(t_c, p_mb)
+    #rvs = saturation_mixing_ratio(t_c, p_mb)
+    rt = rt_from_qt(qt_kgkg)
+    rw = liquid_mixing_ratio(t_c, p_mb, qt_kgkg)
+    rv = rt - rw
+    es = saturation_vapour_pressure(t_c)
+    a = np.exp(alv0*rv/(cpd*(t_c+t0)))
+    b = ((t_c+t0)/t0)**(rw*cl/cpd)
+    c = (1 - es/p_mb)**(-rd/cpd)
+    thetae = theta*a*b*c
+    return thetae
+    
+def saturated_equivalent_potential_temperature(t_c, p_mb, qt_kgkg):
+    theta = dry_potential_temperature(t_c, p_mb)
+    rvs = saturation_mixing_ratio(t_c, p_mb)
+   # rt = rt_from_qt(qt_kgkg)
+    rw = liquid_mixing_ratio(t_c, p_mb, qt_kgkg)
+    #rv = rt - rw
+    es = saturation_vapour_pressure(t_c)
+    a = np.exp(alv0*rvs/(cpd*(t_c+t0)))
+    b = ((t_c+t0)/t0)**(rw*cl/cpd)
+    c = (1 - es/p_mb)**(-rd/cpd)
+    thetaes = theta*a*b*c
+    return thetaes
